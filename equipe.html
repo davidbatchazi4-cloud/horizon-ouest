@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Nous contacter | Horizon Ouest</title>
+	<meta name="description" content="Écrire à l'équipe d'Horizon Ouest, deux élèves de l'ENSEA d'Abidjan : une question sur les données, un indicateur qui manque, une erreur repérée.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap">
+	<link rel="icon" href="images/logo.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="bandeau">
+	<a class="bandeau__titre" href="index.html">
+		<img class="bandeau__logo" src="images/logo.svg" alt="" width="44" height="44">
+		<h1>Horizon Ouest</h1>
+		<p class="bandeau__sous-titre">Le développement humain, année après année</p>
+	</a>
+	<nav class="bandeau__nav" aria-label="Réglages">
+		<button type="button" id="bascule-theme" class="bouton-icone" aria-label="Basculer le thème clair ou sombre">
+			<span aria-hidden="true">◐</span>
+		</button>
+	</nav>
+</header>
+
+<main>
+<!-- ============ En-tete : carte du monde, et les adresses tout de suite ============ -->
+<section class="accueil" aria-labelledby="titre-contact">
+	<img class="accueil__carte" src="images/carte-monde.svg" alt="" aria-hidden="true">
+	<div class="accueil__contenu">
+		<h2 id="titre-contact" class="accueil__titre">Écrivez-nous</h2>
+		<p class="accueil__texte">Une donnée qui vous surprend, un indicateur qui manque, une erreur repérée : nous lisons chaque message et nous répondons.</p>
+		<p class="contact__directs">
+			<a class="contact__adresse" href="mailto:david.batchazi@ensea.edu.ci">david.batchazi@ensea.edu.ci</a>
+			<a class="contact__adresse" href="mailto:elvis.degla@ensea.edu.ci">elvis.degla@ensea.edu.ci</a>
+		</p>
+	</div>
+</section>
+
+<!-- ============ Le message, et qui le lira ============ -->
+<div class="contact">
+	<section class="contact__message" aria-labelledby="titre-suggestions">
+		<h2 id="titre-suggestions" class="projet__titre">Votre message</h2>
+		<p class="contact__chapo">Le nom et l'e-mail sont facultatifs ; laissez votre e-mail si vous souhaitez une réponse.</p>
+		<form id="form-suggestion" class="suggestions__form" novalidate>
+			<div class="suggestions__ligne">
+				<label>Nom (facultatif)<input type="text" name="nom" maxlength="80" autocomplete="name"></label>
+				<label>E-mail, pour vous répondre (facultatif)<input type="email" name="email" maxlength="120" autocomplete="email"></label>
+			</div>
+			<label>Message<textarea name="message" rows="6" minlength="5" maxlength="2000" required aria-describedby="compteur-message"></textarea></label>
+			<p id="compteur-message" class="suggestions__compteur" aria-live="off">0 / 2000</p>
+			<button type="submit" class="bouton bouton--principal">Envoyer le message</button>
+			<p id="retour-suggestion" class="aide" role="status"></p>
+		</form>
+	</section>
+
+	<section id="equipe" class="contact__equipe" aria-labelledby="titre-equipe">
+		<h2 id="titre-equipe" class="projet__titre">Qui vous répond</h2>
+		<p class="contact__chapo">Deux élèves analystes statisticiens de l'ENSEA d'Abidjan.</p>
+		<div class="equipe__grille">
+			<article class="membre">
+				<div class="membre__cadre">
+					<img class="membre__photo" src="images/david.jpg" alt="Photo de BATCHAZI Essoham David" width="160" height="160" data-initiales="DB">
+				</div>
+				<div class="membre__texte">
+					<h3 class="membre__nom">BATCHAZI Essoham David</h3>
+					<p class="membre__role">Élève analyste statisticien, 3ᵉ année</p>
+					<p class="membre__description">
+						Élève à l'École nationale supérieure de statistique et d'économie appliquée (ENSEA)
+						d'Abidjan, de nationalité togolaise.
+					</p>
+					<a class="membre__mail" href="mailto:david.batchazi@ensea.edu.ci" title="david.batchazi@ensea.edu.ci"><svg aria-hidden="true" viewBox="0 0 16 16" width="15" height="15"><path d="M2 4h12v8H2z M2 4.5l6 4.5 6-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Écrire à David</a>
+				</div>
+			</article>
+
+			<article class="membre">
+				<div class="membre__cadre">
+					<img class="membre__photo" src="images/elvis.jpg" alt="Photo de DEGLA Novignon Elvis" width="160" height="160" data-initiales="ED">
+				</div>
+				<div class="membre__texte">
+					<h3 class="membre__nom">DEGLA Novignon Elvis</h3>
+					<p class="membre__role">Élève analyste statisticien, 3ᵉ année</p>
+					<p class="membre__description">
+						Élève à l'ENSEA d'Abidjan, dans la même classe, de nationalité béninoise.
+						Président du comité Génie en herbe (GEH).
+					</p>
+					<a class="membre__mail" href="mailto:elvis.degla@ensea.edu.ci" title="elvis.degla@ensea.edu.ci"><svg aria-hidden="true" viewBox="0 0 16 16" width="15" height="15"><path d="M2 4h12v8H2z M2 4.5l6 4.5 6-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Écrire à Elvis</a>
+				</div>
+			</article>
+		</div>
+	</section>
+</div>
+
+<!-- ============ Le projet ============ -->
+<section class="projet" aria-labelledby="titre-projet">
+	<h2 id="titre-projet" class="projet__titre">Le projet en bref</h2>
+	<p class="projet__texte">
+		Horizon Ouest est né d'un cours de développement web à l'ENSEA d'Abidjan (AS3, 2026-2027).
+		Il suit 21 indicateurs de santé, d'éducation et de conditions de vie pour les 16 pays d'Afrique
+		de l'Ouest, à partir des World Development Indicators de la Banque mondiale. Les calculs passent
+		par une API FastAPI documentée, avec un repli dans le navigateur, et 64 tests automatiques
+		vérifient que les deux donnent les mêmes résultats.
+	</p>
+</section>
+</main>
+
+<footer class="pied">
+	<p>Source des données : Banque mondiale, World Development Indicators · Projet de développement web, ENSEA Abidjan</p>
+	<p><a href="index.html" class="bouton-accueil"><svg class="fleche" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Retour à l'accueil</a></p>
+	<p><a href="admin.html" class="lien-admin">Espace administrateur</a></p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/equipe.js"></script>
+
+</body>
+</html>

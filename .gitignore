@@ -1,0 +1,13 @@
+# Donnees privees : ne jamais publier
+backend/suggestions.jsonl
+backend/suggestions.tmp
+backend/mot_de_passe_admin.txt
+
+# Fichiers generes
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Travail de conception, hors site
+images/propositions-logo/
+Capture*.png

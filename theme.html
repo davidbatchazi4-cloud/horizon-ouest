@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Thèmes | Horizon Ouest</title>
+	<meta name="description" content="Santé, éducation, conditions de vie, démographie, égalité : chaque thème en quelques graphiques, la Côte d'Ivoire face aux 15 autres pays d'Afrique de l'Ouest.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap">
+	<link rel="icon" href="images/logo.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="bandeau">
+	<a class="bandeau__titre" href="index.html">
+		<img class="bandeau__logo" src="images/logo.svg" alt="" width="44" height="44">
+		<h1>Horizon Ouest</h1>
+		<p class="bandeau__sous-titre">Le développement humain, année après année</p>
+	</a>
+	<nav class="bandeau__nav" aria-label="Réglages">
+		<button type="button" id="bascule-theme" class="bouton-icone" aria-label="Basculer le thème clair ou sombre">
+			<span aria-hidden="true">◐</span>
+		</button>
+	</nav>
+</header>
+
+<main class="page">
+	<nav id="onglets-themes" class="onglets" aria-label="Thèmes"></nav>
+	<div class="page__entete">
+		<p class="page__surtitre">Thème</p>
+		<h2 id="theme-titre" class="page__titre">…</h2>
+		<label class="page__choix">Pays mis en avant <select id="theme-pays"></select></label>
+	</div>
+	<p id="theme-intro" class="page__intro"></p>
+	<div id="theme-graphiques" class="graphiques-theme"></div>
+	<p class="aide">Chaque graphique montre les 16 pays d'Afrique de l'Ouest depuis 2000 : le pays mis en avant en couleur, les 15 autres en gris, l'Afrique subsaharienne en pointillés. Survolez une courbe pour lire les valeurs.</p>
+</main>
+
+<footer class="pied">
+	<p>Source : Banque mondiale, World Development Indicators · Projet de développement web, ENSEA Abidjan</p>
+	<p><a href="index.html" class="bouton-accueil"><svg class="fleche" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Retour à l'accueil</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/config.js"></script>
+<script src="js/fiches.js"></script>
+<script src="js/api.js"></script>
+<script src="js/donnees.js"></script>
+<script src="js/commun.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/theme.js"></script>
+
+</body>
+</html>

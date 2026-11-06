@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fiche pays | Horizon Ouest</title>
+	<meta name="description" content="Les 21 indicateurs de développement humain d'un pays d'Afrique de l'Ouest : dernière valeur, tendance depuis 2000, rang parmi les 16 pays et objectifs 2030.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap">
+	<link rel="icon" href="images/logo.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="bandeau">
+	<a class="bandeau__titre" href="index.html">
+		<img class="bandeau__logo" src="images/logo.svg" alt="" width="44" height="44">
+		<h1>Horizon Ouest</h1>
+		<p class="bandeau__sous-titre">Le développement humain, année après année</p>
+	</a>
+	<nav class="bandeau__nav" aria-label="Réglages">
+		<button type="button" id="bascule-theme" class="bouton-icone" aria-label="Basculer le thème clair ou sombre">
+			<span aria-hidden="true">◐</span>
+		</button>
+	</nav>
+</header>
+
+<main class="page page--pays">
+	<div class="pays-entete">
+		<div>
+			<h2 class="page__titre"><span id="pays-nom">…</span></h2>
+			<p class="pays-entete__sous-titre">Fiche pays : les 21 indicateurs du développement humain, depuis 2000</p>
+		</div>
+		<label class="page__choix">Changer de pays <select id="pays-choix"></select></label>
+	</div>
+
+	<div id="pays-bilan" class="bilan" aria-live="polite"></div>
+	<p id="pays-erreur" class="bandeau-info" hidden></p>
+
+	<nav id="pays-raccourcis" class="raccourcis" aria-label="Aller au thème"></nav>
+	<div id="pays-themes"></div>
+
+	<p class="aide pays-note">Courbe : le pays (trait plein) et l'Afrique subsaharienne (pointillés) ; survolez-la pour lire les valeurs. Rang : sur la dernière valeur publiée par chaque pays (les années peuvent différer), 1ᵉʳ = la meilleure situation. Pour la population, la scolarisation brute, la croissance démographique, l'urbanisation et la fécondité, aucun sens n'est « meilleur » : le rang va de la valeur la plus élevée à la plus basse.</p>
+</main>
+
+<footer class="pied">
+	<p>Source : Banque mondiale, World Development Indicators · Projet de développement web, ENSEA Abidjan</p>
+	<p><a href="index.html" class="bouton-accueil"><svg class="fleche" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Retour à l'accueil</a></p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/fiches.js"></script>
+<script src="js/api.js"></script>
+<script src="js/donnees.js"></script>
+<script src="js/commun.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/pays.js"></script>
+
+</body>
+</html>

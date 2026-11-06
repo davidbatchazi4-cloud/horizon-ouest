@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Horizon Ouest | Développement humain en Afrique de l'Ouest</title>
+	<meta name="description" content="Visualiser et comparer les indicateurs de santé, d'éducation, de conditions de vie et de démographie de la Côte d'Ivoire et de ses voisins, à partir des données ouvertes de la Banque mondiale.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap">
+	<link rel="icon" href="images/logo.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="entete-hero">
+<header class="bandeau bandeau--hero">
+	<div id="carrousel" class="carrousel" aria-hidden="true"></div>
+	<a class="bandeau__titre hero__marque" href="index.html">
+		<img class="bandeau__logo" src="images/logo.svg" alt="" width="44" height="44">
+		<h1>Horizon Ouest</h1>
+		<p class="bandeau__sous-titre">Le développement humain, année après année</p>
+	</a>
+	<nav class="bandeau__nav" aria-label="Réglages">
+		<button type="button" id="bascule-theme" class="bouton-icone" aria-label="Basculer le thème clair ou sombre">
+			<span aria-hidden="true">◐</span>
+		</button>
+	</nav>
+	<div class="hero__texte">
+		<h2 id="titre-accueil" class="hero__grand-titre">Vit-on mieux qu'hier en Afrique de l'Ouest&nbsp;?</h2>
+		<p class="hero__accroche">Espérance de vie, école, eau potable, électricité : seize pays suivis depuis 1960 avec les chiffres de la Banque mondiale, et le chemin qu'il leur reste à parcourir jusqu'aux objectifs de 2030.</p>
+		<ul id="chiffres-site" class="accueil__chiffres hero__chiffres"></ul>
+		<p id="carrousel-legende" class="hero__legende"></p>
+	</div>
+	<div id="carrousel-commandes" class="hero__commandes" hidden>
+		<div id="carrousel-points" class="hero__points" role="group" aria-label="Choisir un monument"></div>
+	</div>
+</header>
+</div>
+
+<main id="tableau-de-bord" class="disposition">
+
+	<!-- ============ Panneau de controle ============ -->
+	<aside class="panneau">
+		<form id="formulaire" novalidate>
+
+			<fieldset class="groupe">
+				<legend>Indicateur</legend>
+				<label class="visuellement-cache" for="indicateur">Choisir un indicateur</label>
+				<select id="indicateur" name="indicateur" required></select>
+				<p class="aide" id="unite-indicateur"></p>
+				<label class="etiquette-champ" for="mode">Calcul appliqué</label>
+				<select id="mode" name="mode"></select>
+				<p class="aide" id="aide-mode"></p>
+			</fieldset>
+
+			<fieldset class="groupe">
+				<legend>Période</legend>
+				<div class="periode">
+					<span>
+						<label for="annee-debut">De</label>
+						<input type="number" id="annee-debut" name="annee-debut" required>
+					</span>
+					<span>
+						<label for="annee-fin">à</label>
+						<input type="number" id="annee-fin" name="annee-fin" required>
+					</span>
+				</div>
+				<p class="erreur-champ" id="erreur-periode" role="alert"></p>
+			</fieldset>
+
+			<fieldset class="groupe">
+				<legend>Pays à comparer</legend>
+				<div id="liste-pays" class="liste-pays"></div>
+				<p class="erreur-champ" id="erreur-pays" role="alert"></p>
+			</fieldset>
+
+			<fieldset class="groupe">
+				<legend>Affichage</legend>
+				<div class="bascule" role="group" aria-label="Type de graphique">
+					<button type="button" class="bascule__option actif" data-type="line" aria-pressed="true">Courbes</button>
+					<button type="button" class="bascule__option" data-type="bar" aria-pressed="false">Barres</button>
+				</div>
+				<label class="case">
+					<input type="checkbox" id="afficher-prevision">
+					Afficher la prévision (5 ans)
+				</label>
+				<label class="case">
+					<input type="checkbox" id="detecter-ruptures">
+					Détecter les ruptures
+				</label>
+			</fieldset>
+
+			<div class="actions">
+				<button type="submit" class="bouton bouton--principal">Afficher</button>
+				<button type="button" id="ajouter-favori" class="bouton" title="Enregistrer cette vue dans vos favoris">☆ Favori</button>
+			</div>
+			<div class="actions">
+				<button type="button" id="export-csv" class="bouton">CSV</button>
+				<button type="button" id="export-excel" class="bouton">Excel</button>
+				<button type="button" id="export-pdf" class="bouton">PDF</button>
+			</div>
+			<div class="actions">
+				<button type="button" id="copier-lien" class="bouton">Copier le lien</button>
+			</div>
+			<p class="aide" id="retour-action" role="status"></p>
+			<button type="button" id="reinitialiser" class="lien-discret">Réinitialiser les choix</button>
+
+		</form>
+
+		<section class="groupe groupe--separe" aria-labelledby="titre-favoris">
+			<h2 id="titre-favoris" class="legende-section">Mes favoris</h2>
+			<ul id="liste-favoris" class="liste-favoris"></ul>
+			<p id="favoris-vide" class="aide">Aucun favori. Affichez une vue puis cliquez sur « ☆ Favori ».</p>
+		</section>
+
+		<section class="groupe groupe--separe" aria-labelledby="titre-import">
+			<h2 id="titre-import" class="legende-section">Vos propres données</h2>
+			<input type="file" id="fichier-csv" accept=".csv,text/csv" class="visuellement-cache">
+			<p class="aide">Vous avez vos propres chiffres (une enquête, un rapport, un fichier exporté ici puis modifié) ? Importez-les pour profiter des mêmes outils : graphique, statistiques, prévision, ruptures et exports.</p>
+			<label class="bouton bouton--fichier" for="fichier-csv">Importer un CSV…</label>
+			<details class="aide import-details">
+				<summary>Format attendu</summary>
+				<p>Première colonne : l'année ; une colonne par série (par exemple les chiffres d'un pays tirés d'une enquête nationale) ; séparateur « ; » ou « , » ; cellule vide = donnée manquante. Après l'import, choisissez l'indicateur et la période : vos chiffres s'affichent à côté de ceux de la Banque mondiale. Le fichier reste dans votre navigateur : rien n'est envoyé.</p>
+				<button type="button" id="exemple-csv" class="lien-discret lien-discret--en-ligne">Télécharger un fichier d'exemple</button>
+			</details>
+			<p class="erreur-champ" id="erreur-import" role="alert"></p>
+		</section>
+	</aside>
+
+	<!-- ============ Zone de resultats ============ -->
+	<section class="resultats" aria-live="polite">
+
+		<!-- Etat : chargement -->
+		<div id="etat-chargement" class="etat" hidden>
+			<div class="rotateur" aria-hidden="true"></div>
+			<p id="message-chargement" role="status">Chargement des données…</p>
+		</div>
+
+		<!-- Etat : erreur -->
+		<div id="etat-erreur" class="etat etat--erreur" hidden role="alert">
+			<p class="etat__titre">Les données n'ont pas pu être chargées</p>
+			<p id="message-erreur"></p>
+			<button type="button" id="reessayer" class="bouton">Réessayer</button>
+		</div>
+
+		<!-- Etat : aucune donnee -->
+		<div id="etat-vide" class="etat" hidden>
+			<p class="etat__titre">Aucune donnée sur cette période</p>
+			<p>La Banque mondiale ne publie pas cet indicateur pour les pays et les années demandés. Essayez une période plus large ou un autre indicateur.</p>
+		</div>
+
+		<!-- Etat : contenu -->
+		<div id="contenu" hidden>
+
+			<h2 id="titre-serie" class="titre-serie"></h2>
+			<p id="origine-calculs" class="aide origine-calculs"></p>
+			<p id="bandeau-import" class="bandeau-info" hidden>
+				Données importées depuis votre fichier (trait épais, points en losange) : elles ne sont ni envoyées ni enregistrées.
+				<button type="button" id="quitter-import" class="lien-discret lien-discret--en-ligne">Revenir aux données de la Banque mondiale</button>
+			</p>
+
+			<div id="cartes" class="cartes"></div>
+
+			<figure class="bloc bloc--graphique">
+				<figcaption id="legende-graphique" class="bloc__titre">Évolution de l'indicateur</figcaption>
+				<div class="zone-graphique">
+					<canvas id="graphique"></canvas>
+				</div>
+				<p id="note-prevision" class="aide" hidden></p>
+				<p id="note-mode" class="aide" hidden></p>
+			</figure>
+
+			<details id="fiche" class="bloc fiche">
+				<summary class="bloc__titre">Comprendre l'indicateur</summary>
+				<p id="fiche-definition"></p>
+				<p id="fiche-sens" class="aide"></p>
+				<p id="fiche-odd" class="aide"></p>
+				<p class="aide">Source : Banque mondiale, World Development Indicators, série <a id="fiche-lien" target="_blank" rel="noopener"></a>.</p>
+				<p class="fiche__citation-titre">Citer ce graphique</p>
+				<p id="fiche-citation" class="fiche__citation"></p>
+				<button type="button" id="copier-citation" class="bouton">Copier la citation</button>
+			</details>
+
+			<figure id="bloc-carte" class="bloc bloc--choro" hidden>
+				<figcaption class="bloc__titre">L'Afrique de l'Ouest en <span id="carte-annee"></span></figcaption>
+				<p id="carte-sous-titre" class="choro__sous-titre"></p>
+				<div class="choro__corps">
+					<div id="carte-zone" class="choro__zone">
+						<svg id="carte-svg" class="choro" role="img" aria-label="Carte des 16 pays d'Afrique de l'Ouest colorés selon la valeur de l'indicateur ; les valeurs exactes figurent dans le classement">
+							<defs>
+								<pattern id="hachures" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+									<line x1="0" y1="0" x2="0" y2="5" class="choro__hachure"/>
+								</pattern>
+							</defs>
+						</svg>
+						<span id="carte-grande-annee" class="choro__grande-annee" aria-hidden="true"></span>
+						<div id="carte-infobulle" class="choro__infobulle" hidden></div>
+					</div>
+					<ol id="carte-classement" class="choro__classement" aria-label="Classement des pays pour l'année affichée"></ol>
+				</div>
+				<div class="choro__commandes">
+					<button type="button" id="carte-precedente" class="bouton choro__fleche" aria-label="Année précédente">‹ <span class="choro__fleche-texte">Précédente</span></button>
+					<div id="carte-bande" class="choro__bande" role="group" aria-label="Année affichée sur la carte (flèches ← → du clavier)"></div>
+					<button type="button" id="carte-suivante" class="bouton choro__fleche" aria-label="Année suivante"><span class="choro__fleche-texte">Suivante</span> ›</button>
+				</div>
+				<div class="choro__legende" aria-hidden="true">
+					<span id="carte-min"></span><span class="choro__degrade"></span><span id="carte-max"></span>
+				</div>
+				<p id="carte-note" class="aide"></p>
+			</figure>
+
+			<div id="bloc-ruptures" class="bloc" hidden>
+				<h3 class="bloc__titre">Ruptures détectées</h3>
+				<ul id="liste-ruptures" class="liste-ruptures"></ul>
+				<p class="aide">Une rupture est une variation annuelle qui s'écarte nettement de la tendance du moment (médiane des 5 variations voisines) : plus de 3 fois l'écart habituel, et au moins 1 point pour une série en %, 3 % pour un niveau. Elle signale souvent une crise, une campagne, une épidémie ou un changement de méthode statistique.</p>
+			</div>
+
+			<div class="bloc">
+				<h3 class="bloc__titre">Données détaillées</h3>
+				<div class="zone-tableau">
+					<table id="tableau">
+						<caption class="visuellement-cache">Valeurs de l'indicateur par année et par pays</caption>
+						<thead></thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<p class="aide">n.d. = donnée non disponible</p>
+			</div>
+
+		</div>
+
+		<!-- Etat : accueil (avant toute recherche) -->
+		<div id="etat-accueil" class="etat">
+			<p class="etat__titre">Choisissez un indicateur, une période et des pays</p>
+			<p>Les données proviennent de la base <em>World Development Indicators</em> de la Banque mondiale.</p>
+		</div>
+
+	</section>
+
+</main>
+
+<!-- ============ Apres l'import d'un CSV : que comparer ? ============ -->
+<dialog id="dialogue-import" class="dialogue" aria-labelledby="titre-dialogue-import">
+	<form id="formulaire-import" novalidate>
+		<h2 id="titre-dialogue-import" class="dialogue__titre">Comparer vos données</h2>
+		<p id="import-resume" class="dialogue__resume"></p>
+		<label class="etiquette-champ" for="import-indicateur">Vos chiffres mesurent l'indicateur</label>
+		<select id="import-indicateur"></select>
+		<p id="import-unite" class="aide"></p>
+		<fieldset class="groupe">
+			<legend>Période à comparer</legend>
+			<div class="periode">
+				<span><label for="import-debut">De</label> <input type="number" id="import-debut" required></span>
+				<span><label for="import-fin">à</label> <input type="number" id="import-fin" required></span>
+			</div>
+			<p class="erreur-champ" id="import-erreur" role="alert"></p>
+		</fieldset>
+		<p id="import-pays" class="aide"></p>
+		<div class="actions">
+			<button type="submit" value="comparer" class="bouton bouton--principal">Afficher le comparatif</button>
+			<button type="submit" value="seul" class="bouton">Mes données seules</button>
+		</div>
+		<button type="button" id="import-annuler" class="lien-discret">Annuler l'import</button>
+	</form>
+</dialog>
+
+<footer class="pied">
+	<p>Source : Banque mondiale, World Development Indicators<span id="maj-wdi"></span> · Projet de développement web, ENSEA Abidjan</p>
+	<details class="credits-photos"><summary>Crédits des photos de monuments</summary><ul id="credits-photos"></ul></details>
+	<p><button type="button" id="vider-cache" class="lien-discret">Vider le cache local (<span id="taille-cache">0</span>)</button></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/config.js"></script>
+<script src="js/fiches.js"></script>
+<script src="js/api.js"></script>
+<script src="js/donnees.js"></script>
+<script src="js/commun.js"></script>
+<script src="js/graphique.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/tableau.js"></script>
+<script src="js/export.js"></script>
+<script src="js/favoris.js"></script>
+<script src="js/import.js"></script>
+<script src="js/carte-afrique.js"></script>
+<script src="js/carte.js"></script>
+<script src="js/carrousel.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+FICHIERS CSV DE TEST POUR L'IMPORT D'HORIZON OUEST
+Toutes les valeurs sont FICTIVES : elles servent à tester l'application, pas à être citées.
+Utilisation : page d'accueil > colonne de gauche > « Vos propres données » > « Importer un CSV… ».
+
+1. FICHIERS VALIDES (la fenêtre « Comparer vos données » s'ouvre)
+- valide_enquete-fictive-CIV_mortalite-moins-5-ans_2005-2021.csv
+    Indicateur à choisir : Mortalité des moins de 5 ans. 1 série, années espacées (enquêtes) : le comparatif relie les points.
+- valide_fictif_SEN-GHA_acces-electricite_2010-2023_separateur-virgule.csv
+    Indicateur à choisir : Accès à l'électricité. 2 séries, séparateur « , » et point décimal.
+- valide_fictif_CIV-par-region_scolarisation-primaire_2015-2024_cellules-vides.csv
+    Indicateur à choisir : Scolarisation au primaire. 4 séries régionales, quelques cellules vides (données manquantes).
+- valide_fictif_CIV-hommes-femmes_esperance-de-vie_2000-2023.csv
+    Indicateur à choisir : Espérance de vie à la naissance. 2 séries par sexe : l'unité attendue est « années ».
+- valide_fictif_CIV_fecondite_1960-1990_periode-ancienne.csv
+    Indicateur à choisir : Fécondité. Période ancienne : vérifier le comparatif avant 1990.
+- valide_fictif_export-reimporte_avec-BOM.csv
+    Indicateur à choisir : Mortalité des moins de 5 ans. Même forme qu'un fichier exporté par le site (BOM UTF-8 en tête) : se réimporte tel quel.
+- limite_fictif_projections_2026-2035_annees-futures.csv
+    Indicateur à choisir : Accès à l'électricité. Années futures : la fenêtre plafonne la fin à l'année en cours ; « Mes données seules » les affiche toutes.
+- limite_fictif_deux-annees-seulement.csv
+    Indicateur à choisir : (au choix). Le minimum accepté : un en-tête et deux années.
+
+2. FICHIERS EN ERREUR (un message rouge s'affiche sous le bouton d'import, rien n'est importé)
+- erreur_annee-invalide.csv
+    Refusé : « 2020a » n'est pas une année valide (ligne 3).
+- erreur_annee-en-double.csv
+    Refusé : l'année 2020 apparaît deux fois.
+- erreur_valeur-non-numerique.csv
+    Refusé : « onze » n'est pas un nombre (ligne 3).
+- erreur_colonne-en-double.csv
+    Refusé : la colonne « Série » apparaît deux fois.
+- erreur_une-seule-colonne.csv
+    Refusé : il faut l'année puis au moins une série.
+- erreur_trop-peu-de-lignes.csv
+    Refusé : il faut un en-tête et au moins deux années.
+- erreur_aucune-valeur.csv
+    Refusé : aucune valeur numérique.
+- erreur_annee-hors-limites_1750.csv
+    Refusé : 1750 n'est pas une année valide (1800 à 2100).
+- erreur_mauvais-format.xlsx.txt
+    Extension .txt acceptée, mais contenu refusé : « il faut une ligne d'en-tête et au moins deux années ».
