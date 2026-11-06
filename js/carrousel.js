@@ -59,7 +59,9 @@ const DUREE_DIAPO = 4000; // ms
 		const img = document.createElement("img");
 		img.className = "carrousel__image";
 		img.alt = "";
-		img.src = `images/monuments/${m.fichier ?? m.iso3}.jpg`;
+		// Pas de src tout de suite : la photo n'est telechargee qu'au moment d'etre affichee
+		// (37 photos, environ 9 Mo : tout charger d'un coup ralentissait la page en ligne).
+		img.dataset.src = `images/monuments/${m.fichier ?? m.iso3}.jpg`;
 		if (m.cadrage) img.style.objectPosition = m.cadrage; // photo en hauteur : garder le haut du sujet
 		const point = document.createElement("button");
 		point.type = "button";
@@ -78,6 +80,10 @@ const DUREE_DIAPO = 4000; // ms
 		actuelle = (i + valides.length) % valides.length;
 		const d = valides[actuelle];
 		const n = valides.length;
+		// Charge la photo affichee et la suivante (prete pour le prochain fondu).
+		for (const x of [d, valides[(actuelle + 1) % n]]) {
+			if (!x.img.getAttribute("src")) x.img.src = x.img.dataset.src;
+		}
 		valides.forEach((x, i) => {
 			x.img.classList.toggle("actif", x === d);
 			x.point.setAttribute("aria-current", x === d ? "true" : "false");
