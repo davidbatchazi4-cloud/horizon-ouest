@@ -37,12 +37,13 @@ if (-not (Test-Path "$inetsrv\rewrite.dll")) { Echec "le module URL Rewrite n'es
 if (-not (Test-Path "$env:ProgramFiles\IIS\Application Request Routing")) { Echec "le module ARR n'est pas installe (voir LISEZ-MOI-IIS.md, etape 2)." }
 
 if (-not $Python) {
-    # Python « pour tous les utilisateurs » : C:\Program Files\Python3xx\python.exe (le plus recent)
-    $Python = Get-ChildItem "$env:ProgramFiles\Python3*\python.exe" -ErrorAction SilentlyContinue |
-        Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
+    # Python de python.org : d'abord « pour tous les utilisateurs » (C:\Program Files\Python3xx),
+    # sinon l'installation pour ce compte (AppData\Local\Programs\Python\Python3xx). Le plus recent.
+    $Python = Get-ChildItem "$env:ProgramFiles\Python3*\python.exe", "$env:LOCALAPPDATA\Programs\Python\Python3*\python.exe" `
+        -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1 -ExpandProperty FullName
 }
 if (-not $Python -or -not (Test-Path $Python)) {
-    Echec "Python pour tous les utilisateurs introuvable dans C:\Program Files (voir LISEZ-MOI-IIS.md, etape 3), ou passez -Python <chemin\python.exe>."
+    Echec "Python (python.org) introuvable (voir LISEZ-MOI-IIS.md, etape 3), ou passez -Python <chemin\python.exe>."
 }
 if ($Python -like "*WindowsApps*") { Echec "le Python du Microsoft Store ne peut pas etre utilise par un service : installez Python depuis python.org." }
 Write-Host "   Python : $Python"

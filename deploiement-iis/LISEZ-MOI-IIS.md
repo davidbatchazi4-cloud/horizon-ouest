@@ -25,6 +25,8 @@ IIS est déjà installé sur l'ordinateur. Il manque trois éléments, tous grat
    Dans l'installateur, choisir « Customize installation », puis cocher
    **« Install Python for all users »** (Python s'installe alors dans `C:\Program Files\Python3xx`).
    Le Python du Microsoft Store ne convient pas : un service Windows ne peut pas l'utiliser.
+   Si Python a été installé « pour ce compte seulement » (dossier `AppData\Local\Programs\Python`),
+   cela fonctionne aussi : le script le trouve tout seul.
 
 ## Installer le site
 
