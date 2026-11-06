@@ -60,6 +60,8 @@ dashboard-ci/
 ├── trajectoires.html   graphique à bulles animé depuis 1960 (?x=…&y=…&a=1990)
 ├── admin.html          espace administrateur : messages reçus (lire, marquer lus, supprimer), protégé par mot de passe
 ├── lancer.bat          lance le serveur FastAPI et ouvre le site (Windows)
+├── deploiement-iis/   déploiement sur IIS : guide, web.config (proxy inverse), scripts d'installation et de désinstallation
+├── exemples-csv/      fichiers CSV fictifs pour tester l'import (valides et en erreur)
 ├── images/             photos de l'équipe, carte du monde du bandeau
 ├── css/
 │   └── style.css       mise en page, thème clair/sombre, responsive
@@ -268,3 +270,11 @@ Natural Earth 1:110m (domaine public), via le paquet `world-atlas` (licence ISC)
 Carte choroplèthe (`js/carte-afrique.js`) : Natural Earth 1:50m, les 16 pays d'Afrique de
 l'Ouest (CEDEAO et Mauritanie), le Cap-Vert dans un encadré. L'échelle de couleurs est fixée sur toute la période choisie, pour que
 la même couleur désigne la même valeur d'une année à l'autre ; un pays sans donnée est hachuré.
+
+## Déploiement
+
+- **En ligne (GitHub Pages)** : <https://davidbatchazi4-cloud.github.io/horizon-ouest/>. Hébergement statique :
+  les calculs se font dans le navigateur, le formulaire de contact ouvre la messagerie, l'espace
+  administrateur n'est pas disponible. Chaque `git push` sur `main` met le site à jour.
+- **IIS (avec le serveur Python)** : voir [`deploiement-iis/LISEZ-MOI-IIS.md`](deploiement-iis/LISEZ-MOI-IIS.md).
+  IIS sert le site et transmet `/api` à FastAPI par un proxy inverse (URL Rewrite + ARR).
