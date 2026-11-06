@@ -153,26 +153,51 @@ function textePdf(texte) {
 		.replace(/≈/g, "~").replace(/−/g, "-").replace(/ᵉ/g, "e");
 }
 
-/** Logo « Horizon Ouest » (meme dessin que images/logo.svg, grille de 512) en (x, y), cote c mm. */
+/**
+ * Logo « Horizon Ouest » (meme dessin que images/logo.svg) en (x, y), cote c mm : les 15 pays continentaux
+ * (contours de carte-afrique.js), la Cote d'Ivoire en orange, poses sur un arc dore, sur fond bleu nuit.
+ * Memes reglages que le script qui a genere logo.svg (largeur 420/512, cote sud a y = 372, arc 64-448).
+ */
 function dessinerLogoPdf(doc, x, y, c) {
 	const k = c / 512;
 	const X = (v) => x + v * k, Y = (v) => y + v * k;
-	const nuit = [0, 33, 71];
-	doc.setFillColor(...nuit);
+	doc.setFillColor(0, 33, 71);
 	doc.roundedRect(x, y, c, c, 112 * k, 112 * k, "F");
-	// soleil sans rayons : disque complet, puis la moitie basse recouverte par le fond
-	doc.setFillColor(252, 196, 78);
-	doc.circle(X(256), Y(300), 140 * k, "F");
-	doc.setFillColor(...nuit);
-	doc.rect(X(110), Y(300), 292 * k, 146 * k, "F");
-	// l'horizon devient un graphique : trois barres arrondies (blanc, orange, vert)
-	const barre = (bx, by, l, couleur) => {
-		doc.setFillColor(...couleur);
-		doc.roundedRect(X(bx), Y(by), l * k, 26 * k, 13 * k, 13 * k, "F");
+
+	// Horizon : courbe quadratique du SVG convertie en courbe de Bezier cubique (seul type connu de jsPDF).
+	const [p0, q, p2] = [[64, 420], [256, 356], [448, 420]];
+	const c1 = p0.map((v, i) => v + (2 / 3) * (q[i] - v)), c2 = p2.map((v, i) => v + (2 / 3) * (q[i] - v));
+	doc.setDrawColor(252, 196, 78);
+	doc.setLineWidth(30 * k);
+	doc.setLineCap("round");
+	doc.path([{ op: "m", c: [X(p0[0]), Y(p0[1])] }, { op: "c", c: [X(c1[0]), Y(c1[1]), X(c2[0]), Y(c2[1]), X(p2[0]), Y(p2[1])] }]);
+	doc.stroke();
+	doc.setLineCap("butt");
+
+	if (typeof CARTE_AFRIQUE === "undefined") return; // sans contours : fond et horizon seulement
+	const pays = CARTE_AFRIQUE.pays.filter(p => p.iso3 !== "CPV");
+	const points = (d) => [...d.matchAll(/([ML])([^MLZ]*)/g)].map(([, , a]) => a.split(/[ ,]+/).filter(Boolean).map(Number));
+	const tous = pays.flatMap(p => points(p.d));
+	const xmin = Math.min(...tous.map(p => p[0])), xmax = Math.max(...tous.map(p => p[0]));
+	const ymin = Math.min(...tous.map(p => p[1])), ymax = Math.max(...tous.map(p => p[1]));
+	const e = 420 / (xmax - xmin);
+	const ox = 46 - xmin * e, oy = 372 - (ymax - ymin) * e - ymin * e;
+	const ops = (d) => {
+		const liste = [];
+		for (const [, cmd, args] of d.matchAll(/([MLZ])([^MLZ]*)/g)) {
+			if (cmd === "Z") { liste.push({ op: "h", c: [] }); continue; }
+			const [a, b] = args.split(/[ ,]+/).filter(Boolean).map(Number);
+			liste.push({ op: cmd === "M" ? "m" : "l", c: [X(a * e + ox), Y(b * e + oy)] });
+		}
+		return liste;
 	};
-	barre(96, 326, 320, [230, 237, 245]);
-	barre(146, 372, 220, [247, 127, 0]);
-	barre(196, 418, 120, [0, 158, 96]);
+	doc.setDrawColor(0, 33, 71);
+	doc.setLineWidth(3 * k);
+	for (const p of pays) {
+		doc.setFillColor(...(p.iso3 === "CIV" ? [247, 127, 0] : [230, 237, 245]));
+		doc.path(ops(p.d));
+		doc.fillStroke();
+	}
 	doc.setDrawColor(...PDF.nuit);
 }
 

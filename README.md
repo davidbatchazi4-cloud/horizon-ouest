@@ -62,7 +62,7 @@ dashboard-ci/
 ├── lancer.bat          lance le serveur FastAPI et ouvre le site (Windows)
 ├── deploiement-iis/   déploiement sur IIS : guide, web.config (proxy inverse), scripts d'installation et de désinstallation
 ├── exemples-csv/      fichiers CSV fictifs pour tester l'import (valides et en erreur)
-├── images/             photos de l'équipe, carte du monde du bandeau
+├── images/             logo.svg (carte des 15 pays sur fond nuit), logo-fond-clair.svg (pour documents clairs), monuments, carte du monde
 ├── css/
 │   └── style.css       mise en page, thème clair/sombre, responsive
 ├── js/
