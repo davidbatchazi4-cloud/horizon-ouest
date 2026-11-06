@@ -61,7 +61,7 @@ New-Item -ItemType Directory -Force -Path $Destination | Out-Null
 # les messages recus et le mot de passe administrateur survivent aux mises a jour.
 robocopy $Source $Destination /MIR /NFL /NDL /NJH /NJS /NP `
     /XD .git __pycache__ .pytest_cache propositions-logo deploiement-iis `
-    /XF suggestions.jsonl suggestions.tmp mot_de_passe_admin.txt web.config lancer.bat "Capture*" "Image ChatGPT*" | Out-Null
+    /XF suggestions.jsonl suggestions.tmp mot_de_passe_admin.txt web.config lancer.bat "Capture*" "Image ChatGPT*" "*.jpeg" | Out-Null
 if ($LASTEXITCODE -ge 8) { Echec "la copie (robocopy) a echoue, code $LASTEXITCODE." }
 Copy-Item "$PSScriptRoot\web.config" "$Destination\web.config" -Force
 Write-Host "   Fichiers copies."
