@@ -1,6 +1,13 @@
+<p align="center"><img src="images/logo.svg" alt="Logo Horizon Ouest" width="120"></p>
+
 # Horizon Ouest : le développement humain en Afrique de l'Ouest, année après année
 
-Logo (`images/logo.svg`) : un soleil levant orange sur l'horizon (lignes blanche et verte) : le progrès qui se lève.
+<p align="center">
+  <a href="https://davidbatchazi4-cloud.github.io/horizon-ouest/"><b>▶ Ouvrir l'application en ligne</b></a><br>
+  <a href="https://davidbatchazi4-cloud.github.io/horizon-ouest/">https://davidbatchazi4-cloud.github.io/horizon-ouest/</a>
+</p>
+
+Logo (`images/logo.svg`) : les 15 pays d'Afrique de l'Ouest continentale (vraies frontières), la Côte d'Ivoire en orange, posés sur un horizon doré.
 
 Projet de développement web, ENSEA Abidjan, AS3 (2026-2027).
 Équipe : BATCHAZI Essoham David et DEGLA Novignon Elvis.
