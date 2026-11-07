@@ -64,6 +64,13 @@ robocopy $Source $Destination /MIR /NFL /NDL /NJH /NJS /NP `
     /XF suggestions.jsonl suggestions.tmp mot_de_passe_admin.txt web.config lancer.bat "Capture*" "Image ChatGPT*" "*.jpeg" | Out-Null
 if ($LASTEXITCODE -ge 8) { Echec "la copie (robocopy) a echoue, code $LASTEXITCODE." }
 Copy-Item "$PSScriptRoot\web.config" "$Destination\web.config" -Force
+# Mot de passe administrateur : celui choisi dans le projet (backend\mot_de_passe_admin.txt) sert aussi a IIS,
+# pour n'avoir qu'un seul mot de passe a retenir. Sans ce fichier, IIS garde le sien (ou en cree un).
+$mdpProjet = Join-Path $Source "backend\mot_de_passe_admin.txt"
+if ((Test-Path $mdpProjet) -and (Get-Content $mdpProjet -Raw).Trim()) {
+    Copy-Item $mdpProjet "$Destination\backend\mot_de_passe_admin.txt" -Force
+    Write-Host "   Mot de passe administrateur du projet recopie pour IIS."
+}
 Write-Host "   Fichiers copies."
 
 # ---------- 2. Dependances Python ----------
@@ -119,7 +126,7 @@ Write-Host "   Dossier backend protege : $(if ($secret -eq 404) { 'oui (404)' } 
 if ($ok -and $page -eq 200) {
     Write-Host "`nHorizon Ouest est deploye sur IIS : http://localhost:$PortSite/" -ForegroundColor Green
     Write-Host "Espace administrateur : http://localhost:$PortSite/admin.html"
-    Write-Host "Mot de passe : $Destination\backend\mot_de_passe_admin.txt (cree a la premiere connexion)."
+    Write-Host "Mot de passe : le meme que dans le projet (dashboard-ci\backend\mot_de_passe_admin.txt)."
 } else {
     Write-Host "`nLe site est installe mais un controle a echoue : voir la section Depannage de LISEZ-MOI-IIS.md." -ForegroundColor Yellow
 }

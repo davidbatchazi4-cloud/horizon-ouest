@@ -54,9 +54,9 @@ d'accueil, l'API derrière le proxy et la protection du dossier `backend`.
 | Messages reçus (administrateur) | <http://localhost:8080/admin.html> |
 | Documentation de l'API | <http://localhost:8080/docs> |
 
-Mot de passe administrateur : fichier `C:\inetpub\horizon-ouest\backend\mot_de_passe_admin.txt`,
-créé à la première tentative de connexion (l'ouvrir avec le Bloc-notes lancé en administrateur).
-On peut y écrire son propre mot de passe.
+Mot de passe administrateur : celui écrit dans `dashboard-ci\backend\mot_de_passe_admin.txt`. C'est le
+même pour `lancer.bat` et pour IIS : le script d'installation le recopie. Pour le changer, modifiez ce
+fichier puis relancez `installer-iis.ps1`. Il n'est jamais publié sur GitHub.
 
 Depuis un autre ordinateur du même réseau : `http://<adresse IP de ce PC>:8080/`, à condition
 d'autoriser le port 8080 dans le pare-feu Windows.
