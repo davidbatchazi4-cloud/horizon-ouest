@@ -25,7 +25,7 @@ class ErreurAdmin extends Error {}
 /** Appel a l'API d'administration ; 401 = mot de passe refuse. */
 async function appelAdmin(chemin, options = {}) {
 	if (!location.protocol.startsWith("http")) {
-		throw new ErreurAdmin("Cette page a besoin du serveur : lancez le site avec lancer.bat, puis ouvrez http://127.0.0.1:8000/admin.html.");
+		throw new ErreurAdmin("Cette page est ouverte comme un fichier (adresse en C:/…) : elle ne peut pas joindre le serveur. Ouvrez-la par son adresse web : http://localhost:8090/admin.html avec IIS, ou http://127.0.0.1:8000/admin.html avec lancer.bat.");
 	}
 	let reponse;
 	try {
@@ -202,7 +202,7 @@ async function changerLu(s, lu) {
 		});
 	}
 	if (!location.protocol.startsWith("http")) {
-		elAdmin.erreur.textContent = "Cette page a besoin du serveur : lancez le site avec lancer.bat, puis ouvrez http://127.0.0.1:8000/admin.html.";
+		elAdmin.erreur.textContent = "Cette page est ouverte comme un fichier (adresse en C:/…) : elle ne peut pas joindre le serveur. Ouvrez-la par son adresse web : http://localhost:8090/admin.html avec IIS, ou http://127.0.0.1:8000/admin.html avec lancer.bat.";
 	} else if (lireSession()) {
 		charger(); // deja connecte dans cet onglet
 	}
