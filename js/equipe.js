@@ -68,6 +68,22 @@ function brancherSuggestions() {
 		const bouton = form.querySelector("button");
 		bouton.disabled = true;
 		delete form.dataset.etat;
+		// Firestore configure : le message est enregistre dans la base, meme sans serveur (GitHub Pages).
+		if (typeof MessagesFirestore !== "undefined" && MessagesFirestore.actif) {
+			try {
+				await MessagesFirestore.envoyer(donnees);
+				form.reset();
+				form.dataset.etat = "envoye";
+				retour.textContent = "Merci, votre message est bien arrivé. Nous vous répondrons si vous avez laissé votre e-mail.";
+			} catch (erreur) {
+				console.error(erreur);
+				form.dataset.etat = "erreur";
+				retour.textContent = "Envoi impossible pour le moment. Écrivez-nous par e-mail, avec les adresses en haut de la page.";
+			} finally {
+				bouton.disabled = false;
+			}
+			return;
+		}
 		try {
 			const r = await fetch("/api/suggestions", {
 				method: "POST",

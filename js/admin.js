@@ -1,10 +1,15 @@
 // admin.js : espace administrateur (admin.html) : lire, marquer lus et supprimer les messages.
-// Tout passe par l'API du serveur Python, protegee par mot de passe. Le mot de passe saisi reste
-// en memoire de l'onglet (sessionStorage) : il disparait a la fermeture de l'onglet.
+// Deux modes :
+//  - Firestore (si js/firebase-config.js est rempli) : connexion par compte Firebase (e-mail et mot de
+//    passe), la base est lue directement depuis le navigateur ; marche aussi sur GitHub Pages ;
+//  - serveur : API du serveur Python, protegee par mot de passe (IIS ou lancer.bat). Le mot de passe
+//    saisi reste en memoire de l'onglet (sessionStorage) et disparait a sa fermeture.
 
 const CLE_SESSION_ADMIN = "ho_admin";
 const elAdmin = {
 	connexion:   document.getElementById("admin-connexion"),
+	email:       document.getElementById("admin-email"),
+	ligneEmail:  document.getElementById("admin-ligne-email"),
 	mdp:         document.getElementById("admin-mdp"),
 	erreur:      document.getElementById("admin-erreur"),
 	messages:    document.getElementById("admin-messages"),
@@ -16,6 +21,7 @@ const elAdmin = {
 	deconnexion: document.getElementById("admin-deconnexion"),
 };
 const etatAdmin = { suggestions: [], filtre: "tous" };
+const MODE_FIRESTORE = typeof MessagesFirestore !== "undefined" && MessagesFirestore.actif;
 
 const lireSession = () => { try { return sessionStorage.getItem(CLE_SESSION_ADMIN) || ""; } catch { return ""; } };
 const ecrireSession = (v) => { try { v ? sessionStorage.setItem(CLE_SESSION_ADMIN, v) : sessionStorage.removeItem(CLE_SESSION_ADMIN); } catch { /* ignore */ } };
@@ -56,14 +62,34 @@ function afficherConnexion(message = "") {
 	elAdmin.deconnexion.hidden = true;
 	elAdmin.erreur.textContent = message;
 	elAdmin.mdp.value = "";
-	elAdmin.mdp.focus();
+	(MODE_FIRESTORE && !elAdmin.email.value ? elAdmin.email : elAdmin.mdp).focus();
+}
+
+/** Les trois operations, selon le mode : Firestore ou API du serveur. */
+const sourceMessages = MODE_FIRESTORE ? {
+	lister: () => MessagesFirestore.lister(),
+	marquer: (id, lu) => MessagesFirestore.marquer(id, lu).then(() => ({ lu })),
+	supprimer: (id) => MessagesFirestore.supprimer(id),
+} : {
+	lister: () => appelAdmin("/api/admin/suggestions").then(r => r.suggestions),
+	marquer: (id, lu) => appelAdmin(`/api/admin/suggestions/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ lu }) }),
+	supprimer: (id) => appelAdmin(`/api/admin/suggestions/${encodeURIComponent(id)}`, { method: "DELETE" }),
+};
+
+/** Erreurs Firebase converties en ErreurAdmin (message en francais) ; les autres passent telles quelles. */
+async function operation(promesse) {
+	try {
+		return await promesse;
+	} catch (erreur) {
+		if (erreur instanceof ErreurAdmin || !MODE_FIRESTORE) throw erreur;
+		throw new ErreurAdmin(MessagesFirestore.expliquer(erreur));
+	}
 }
 
 async function charger() {
 	elAdmin.actualiser.disabled = true;
 	try {
-		const r = await appelAdmin("/api/admin/suggestions");
-		etatAdmin.suggestions = r.suggestions;
+		etatAdmin.suggestions = await operation(sourceMessages.lister());
 		elAdmin.connexion.hidden = true;
 		elAdmin.messages.hidden = false;
 		elAdmin.deconnexion.hidden = false;
@@ -152,7 +178,7 @@ function afficherListe() {
 			clearTimeout(minuterie);
 			supprimer.disabled = true;
 			try {
-				await appelAdmin(`/api/admin/suggestions/${encodeURIComponent(s.id)}`, { method: "DELETE" });
+				await operation(sourceMessages.supprimer(s.id));
 				etatAdmin.suggestions = etatAdmin.suggestions.filter(x => x.id !== s.id);
 				afficherListe();
 			} catch (erreur) {
@@ -167,9 +193,7 @@ function afficherListe() {
 
 async function changerLu(s, lu) {
 	try {
-		const maj = await appelAdmin(`/api/admin/suggestions/${encodeURIComponent(s.id)}`, {
-			method: "PATCH", body: JSON.stringify({ lu }),
-		});
+		const maj = await operation(sourceMessages.marquer(s.id, lu));
 		s.lu = maj.lu;
 		afficherListe();
 	} catch (erreur) {
@@ -180,15 +204,26 @@ async function changerLu(s, lu) {
 
 (function demarrer() {
 	brancherThemePage();
-	elAdmin.connexion.addEventListener("submit", (e) => {
+	elAdmin.connexion.addEventListener("submit", async (e) => {
 		e.preventDefault();
 		const mdp = elAdmin.mdp.value.trim();
+		if (MODE_FIRESTORE && !elAdmin.email.value.trim()) { elAdmin.erreur.textContent = "Saisissez l'e-mail."; return; }
 		if (!mdp) { elAdmin.erreur.textContent = "Saisissez le mot de passe."; return; }
 		elAdmin.erreur.textContent = "";
+		if (MODE_FIRESTORE) {
+			// La liste se charge toute seule apres la connexion (surConnexion, plus bas).
+			try { await MessagesFirestore.connexion(elAdmin.email.value.trim(), mdp); }
+			catch (erreur) { elAdmin.erreur.textContent = MessagesFirestore.expliquer(erreur); elAdmin.mdp.value = ""; }
+			return;
+		}
 		ecrireSession(mdp);
 		charger();
 	});
-	elAdmin.deconnexion.addEventListener("click", () => { ecrireSession(""); afficherConnexion(); });
+	elAdmin.deconnexion.addEventListener("click", () => {
+		if (MODE_FIRESTORE) { MessagesFirestore.deconnexion(); return; } // surConnexion affiche la connexion
+		ecrireSession("");
+		afficherConnexion();
+	});
 	elAdmin.actualiser.addEventListener("click", charger);
 	elAdmin.recherche.addEventListener("input", afficherListe);
 	for (const bouton of document.querySelectorAll(".admin__filtre .bascule__option")) {
@@ -201,7 +236,10 @@ async function changerLu(s, lu) {
 			afficherListe();
 		});
 	}
-	if (!location.protocol.startsWith("http")) {
+	if (MODE_FIRESTORE) {
+		elAdmin.ligneEmail.hidden = false;
+		MessagesFirestore.surConnexion((utilisateur) => { if (utilisateur) charger(); else afficherConnexion(); });
+	} else if (!location.protocol.startsWith("http")) {
 		elAdmin.erreur.textContent = "Cette page est ouverte comme un fichier (adresse en C:/…) : elle ne peut pas joindre le serveur. Ouvrez-la par son adresse web : http://localhost:8090/admin.html avec IIS, ou http://127.0.0.1:8000/admin.html avec lancer.bat.";
 	} else if (lireSession()) {
 		charger(); // deja connecte dans cet onglet

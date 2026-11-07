@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// Regles de securite Firestore d'Horizon Ouest.
+// A coller dans la console Firebase : Firestore Database > Regles > Publier.
+// UID du compte administrateur (Authentication > Users) : seul ce compte lit les messages.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estAdmin() {
+      return request.auth != null && request.auth.uid == "aFDpQDWH0tPJ3Hgm23gc9UjXjIr2";
+    }
+
+    match /messages/{message} {
+      // Tout visiteur peut DEPOSER un message, s'il respecte exactement le format du formulaire.
+      allow create: if request.resource.data.keys().hasOnly(["nom", "email", "message", "lu", "date"])
+        && request.resource.data.keys().hasAll(["nom", "email", "message", "lu", "date"])
+        && request.resource.data.nom is string && request.resource.data.nom.size() <= 80
+        && request.resource.data.email is string && request.resource.data.email.size() <= 120
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 5 && request.resource.data.message.size() <= 2000
+        && request.resource.data.lu == false
+        && request.resource.data.date == request.time;
+
+      // Seul l'administrateur peut LIRE et SUPPRIMER.
+      allow read, delete: if estAdmin();
+
+      // ... et seulement changer le champ « lu ».
+      allow update: if estAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["lu"])
+        && request.resource.data.lu is bool;
+    }
+
+    // Tout le reste est interdit.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

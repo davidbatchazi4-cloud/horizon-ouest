@@ -1084,3 +1084,10 @@ td.rupture { color: var(--rouge); font-weight: 700; box-shadow: inset 0 -2px 0 v
 .admin__connexion[hidden], .admin__messages[hidden], .admin__deconnexion[hidden] { display: none; }
 .admin__outils .bouton, .admin__deconnexion { width: auto; flex: 0 0 auto; }
 .admin__filtre .bascule__option { white-space: nowrap; }
+.admin__champ { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .4rem; }
+.admin__champ[hidden] { display: none; }
+.admin__champ input {
+	padding: .7rem .85rem; font: inherit; color: var(--texte);
+	background: var(--fond-panneau); border: 1px solid var(--bordure); border-radius: var(--rayon-petit);
+}
+.admin__champ input:focus { outline: 2px solid var(--dore); outline-offset: 1px; border-color: var(--dore); }
